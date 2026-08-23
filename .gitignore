@@ -1,4 +1,4 @@
-# Binaries
+# Binaries and build outputs
 bin/
 dist/
 *.exe
@@ -7,13 +7,28 @@ dist/
 *.so
 *.dylib
 
-# Test artifacts
+# Test artifacts and coverage
 *.test
 *.out
+coverage.txt
+profile.pprof
 
 # Go workspace
 go.work
 go.work.sum
 
-# OS
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS artifacts
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
