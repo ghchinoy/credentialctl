@@ -1,5 +1,5 @@
 ---
-title: Agent Automation (A2A)
+title: Agent-Aware Automation
 description: Best practices for integrating credentialctl into automated agent workflows and CI/CD pipelines.
 ---
 

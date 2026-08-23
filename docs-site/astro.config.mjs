@@ -56,7 +56,7 @@ export default defineConfig({
 				{
 					label: 'Integration & Guides',
 					items: [
-						{ label: 'Agent Automation (A2A)', slug: 'guide-automation' },
+						{ label: 'Agent-Aware Automation', slug: 'guide-automation' },
 						{ label: 'Troubleshooting & CGO', slug: 'guide-troubleshooting' },
 					],
 				},

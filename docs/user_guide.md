@@ -113,9 +113,9 @@ Press `Esc` or `Backspace` at any time to return to the Folder Review view.
 
 ---
 
-## 4. Agent and Automation Integration
+## 4. Agent-Aware Automation Integration
 
-`credentialctl` adheres to Agent-to-Agent (A2A) CLI design conventions:
+`credentialctl` adheres to Agent-Aware CLI design conventions:
 - **Consistent JSON Serialization:** All data commands accept `--json`. Output payloads include engine timing, file metadata, and complete manifest structures.
 - **Cobra Grouping:** Commands are grouped logically into `validation`, `inspection`, and `interactive` categories.
 - **Actionable Error Messages:** Errors provide prescriptive hints indicating proper path syntax or supported file extensions.
