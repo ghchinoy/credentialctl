@@ -1,0 +1,43 @@
+version: 2
+
+project_name: credentialctl
+
+before:
+  hooks:
+    - make build-deps
+
+builds:
+  - id: credentialctl-darwin-arm64
+    main: ./main.go
+    binary: credentialctl
+    goos:
+      - darwin
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=1
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+      - ../credentio-contributions/go/lib/libcredentio_c.dylib
+      - ../credentio-contributions/go/lib/libcredentio_c.so
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
