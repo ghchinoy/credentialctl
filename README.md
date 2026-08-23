@@ -1,108 +1,149 @@
-# CredentialCTL (`credentialctl`)
+# credentialctl
 
-`credentialctl` is an **Agent-Aware** CLI and interactive [Bubble Tea](https://github.com/charmbracelet/bubbletea) terminal user interface for validating and deeply inspecting [C2PA](https://c2pa.org/) (Coalition for Content Provenance and Authenticity) manifests in media assets.
+A command-line tool and interactive terminal interface to validate and inspect C2PA content credentials in media files.
 
-Built on top of Google Credentio high-performance native C-ABI bindings via [`credentio-contributions`](https://github.com/ghchinoy/credentio-contributions).
-
----
-
-## Features
-
-- 📁 **Folder Review Mode**: Rapidly scan directories for supported media assets (`.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`, `.heic`, `.mp4`, `.mov`, etc.), batch validating credentials in milliseconds.
-- 🔍 **File Inspector Mode**: Tabbed drill-down into asset metadata, assertion lists (`c2pa.actions`, data hashes, thumbnails), cryptographic signatures & certificate authorities, validation status codes, and raw `crJSON`.
-- 🤖 **Agent-Aware CLI Design**:
-  - Logical Cobra command groups (`validation`, `inspection`, `interactive`).
-  - Comprehensive documentation with `Short`, `Long`, and executable `Example` blocks.
-  - Machine-parsable `--json` outputs for automation pipelines and agent workflows.
-  - Proactive, actionable hints in error messages.
-  - Semantic Lipgloss styling (`Accent`, `Pass`, `Warn`, `Fail`, `Muted`, `ID`).
-- ⚡ **Interactive Terminal UI**: Full-screen responsive Bubble Tea interface with live filter cycling (`All`, `Signed Only`, `Unsigned Only`, `Invalid Only`), progress spinners, and keyboard-driven navigation.
+`credentialctl` validates manifests, digital signatures, certificate chains, and assertions in images, videos, and audio. It is powered by Google Credentio native C-ABI bindings.
 
 ---
 
-## Installation & Prerequisites
+## Table of Contents
+- [Quick Installation](#quick-installation)
+- [Immediate Usage](#immediate-usage)
+- [Local Development Setup](#local-development-setup)
+- [Publish and Release Process](#publish-and-release-process)
+- [Contributing](#contributing)
+- [Features and TUI Controls](#features-and-tui-controls)
+- [Documentation](#documentation)
+- [License](#license)
 
-### Requirements
-- **Go**: Version `1.26+`
-- **CGO**: `CGO_ENABLED=1`
-- **Native Library**: Built `libcredentio_c.dylib` (macOS) or `libcredentio_c.so` (Linux) staged in `../credentio-contributions/go/lib`.
+---
 
-### Building
+## Quick Installation
+
+Build the binary directly from source:
+
 ```bash
-# Clone and build
 git clone https://github.com/ghchinoy/credentialctl.git
 cd credentialctl
 make build
 ```
 
-Binary will be produced at `bin/credentialctl`.
+The compiled executable is placed at `bin/credentialctl`.
 
 ---
 
-## CLI Usage
+## Immediate Usage
 
-### 1. Interactive TUI
+Validate any media file with a single command:
+
 ```bash
-# Launch interactive TUI for current folder
-credentialctl
-
-# Open TUI on a specific media folder
-credentialctl tui /path/to/media
-
-# Open TUI recursively scanning subdirectories
-credentialctl tui /path/to/media -r
+./bin/credentialctl validate sample.jpg
 ```
 
-**TUI Keybindings:**
-- `↑` / `↓` or `k` / `j`: Move selection up and down.
-- `Enter`: Inspect selected file in the File Inspector.
-- `Tab` / `f`: Cycle status filters (`All` → `Signed Only` → `Unsigned Only` → `Invalid Only`).
-- `r`: Rescan directory.
-- `1` - `5` or `Left` / `Right`: Switch tabs in File Inspector (`Overview`, `Assertions`, `Signature`, `Validation`, `Raw JSON`).
-- `PgUp` / `PgDn`: Scroll inspection views.
-- `Esc` / `Backspace`: Return to Folder Review view.
-- `q` / `Ctrl+C`: Quit application.
+Output:
+```text
+  C2PA VALIDATION REPORT  
 
-### 2. Validate a Single Asset
-```bash
-# Human-readable formatted card
-credentialctl validate image.png
-
-# Machine-parsable JSON output
-credentialctl validate image.png --json
+  Asset:           sample.jpg (1.20 MB, image/jpeg)
+  Path:            /path/to/sample.jpg
+  Status:          [✓ SIGNED]
+  Generator:       Google C2PA Core Generator Library
+  Signer:          Google C2PA Media Services
+  Format/Spec:     image/jpeg (C2PA 2.2)
+  Assertions:      3 attached
+  Validation:      10 reported
+  Wall Time:       4.61 ms
 ```
 
-**Exit Codes:**
-- `0`: Asset is authentic and signed (`SIGNED`).
-- `1`: Asset contains no C2PA credentials (`UNSIGNED`).
-- `2`: Asset contains an invalid or failing signature/manifest (`INVALID`).
+To output structured JSON for agent and pipeline automation:
 
-### 3. Scan a Directory
 ```bash
-# Scan directory non-recursively
-credentialctl folder ./photos
-
-# Scan directory recursively
-credentialctl folder ./photos --recursive
-
-# Output batch scan summary as JSON
-credentialctl folder ./photos --json
+./bin/credentialctl validate sample.jpg --json
 ```
 
-### 4. Deep Inspection
+---
+
+## Local Development Setup
+
+### Prerequisites
+- Go 1.26 or newer
+- CGO enabled (`CGO_ENABLED=1`)
+- Native `libcredentio_c` staged in `../credentio-contributions/go/lib`
+
+### Development Commands
+
+Clone the repository and run the test suite:
+
 ```bash
-# Full manifest breakdown in terminal
-credentialctl inspect photo.jpg
-
-# Output formatted or raw crJSON
-credentialctl inspect photo.jpg --raw
-credentialctl inspect photo.jpg --json
-
-# Open directly into the interactive TUI inspector
-credentialctl inspect photo.jpg --tui
+git clone https://github.com/ghchinoy/credentialctl.git
+cd credentialctl
+make test
 ```
+
+Launch the interactive interface directly from source:
+
+```bash
+make run
+```
+
+---
+
+## Publish and Release Process
+
+Maintainers package release binaries using GoReleaser:
+
+```bash
+# Build local snapshot archives
+make release-snapshot
+```
+
+Artifacts and checksums are generated in the `dist/` directory.
+
+---
+
+## Contributing
+
+Pull requests and issue reports are welcome. For major architectural changes or new command additions, please open an issue first to discuss the design.
+
+Ensure all unit tests pass before submitting changes:
+
+```bash
+make test
+```
+
+---
+
+## Features and TUI Controls
+
+`credentialctl` provides both automated CLI commands and an interactive Bubble Tea terminal user interface.
+
+### Interactive TUI Navigation
+
+Launch the full-screen interface on any folder:
+
+```bash
+./bin/credentialctl tui /path/to/media
+```
+
+| Keybinding | Action |
+|---|---|
+| `↑` / `↓` or `k` / `j` | Navigate media table rows |
+| `Enter` | Open deep File Inspector for selected asset |
+| `Tab` / `f` | Cycle status filters: All, Signed Only, Unsigned Only, Invalid Only |
+| `r` | Rescan directory and update validation counters |
+| `1` - `5` | Switch Inspector tabs: Overview, Assertions, Signature, Validation, Raw JSON |
+| `PgUp` / `PgDn` | Scroll viewport content |
+| `Esc` / `Backspace` | Return from Inspector to Folder Review |
+| `q` / `Ctrl+C` | Quit application |
+
+---
+
+## Documentation
+
+For comprehensive command documentation, JSON schema definitions, and workflow recipes, consult the [User Guide](docs/user_guide.md).
 
 ---
 
 ## License
-Apache 2.0 - Copyright 2026 Google LLC.
+
+Apache 2.0. Copyright 2026 Google LLC.
