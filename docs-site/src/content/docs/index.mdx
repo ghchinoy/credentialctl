@@ -1,0 +1,37 @@
+---
+title: CredentialCTL
+description: High-performance CLI and Bubble Tea TUI for C2PA Content Credentials validation.
+template: splash
+hero:
+  tagline: Validate and inspect C2PA Content Credentials in terminal. In-process, local-first, zero network overhead.
+  actions:
+    - text: Quick Start
+      link: /credentialctl/quickstart/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/ghchinoy/credentialctl
+      icon: external
+      variant: secondary
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Interactive Terminal Inspection
+
+Validate manifests, digital signatures, certificate chains, and assertions in images, videos, and audio:
+
+<CardGrid stagger>
+  <Card title="Folder Review TUI" icon="document">
+    Scan entire directories concurrently. Monitor live validation progress with status counters and instant filtering across Signed, Unsigned, and Invalid assets.
+  </Card>
+  <Card title="Deep File Inspector" icon="magnifier">
+    Explore embedded C2PA manifests with five dedicated inspector tabs: Overview, Assertions, Signatures, Validation Statuses, and scrollable Raw crJSON.
+  </Card>
+  <Card title="Agent-Aware CLI" icon="laptop">
+    Integrate into automation pipelines using structured `--json` flags, strict exit codes (0, 1, 2), and proactive error recommendations.
+  </Card>
+  <Card title="Native C-ABI Performance" icon="rocket">
+    Validate media in milliseconds via direct in-process bindings to Google Credentio native libraries.
+  </Card>
+</CardGrid>

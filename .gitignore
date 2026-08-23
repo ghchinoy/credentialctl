@@ -17,6 +17,10 @@ profile.pprof
 go.work
 go.work.sum
 
+# Node & Docs site
+node_modules/
+.astro/
+
 # IDEs and editors
 .idea/
 .vscode/

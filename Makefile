@@ -25,5 +25,12 @@ build-deps:
 release-snapshot: build-deps
 	goreleaser release --snapshot --clean
 
+# Documentation site
+docs-dev:
+	cd docs-site && npm run dev
+
+docs-build:
+	cd docs-site && npm run build
+
 clean:
-	rm -rf bin/ dist/
+	rm -rf bin/ dist/ docs-site/dist/ docs-site/.astro/
