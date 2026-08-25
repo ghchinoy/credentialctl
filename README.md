@@ -61,6 +61,12 @@ To output structured JSON for agent and pipeline automation:
 ./bin/credentialctl validate sample.jpg --json
 ```
 
+To output raw native engine crJSON directly:
+
+```bash
+./bin/credentialctl validate sample.jpg --raw
+```
+
 ---
 
 ## Local Development Setup

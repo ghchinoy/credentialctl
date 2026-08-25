@@ -26,6 +26,9 @@ credentialctl validate photo.jpg
 # JSON output
 credentialctl validate video.mp4 --json
 
+# Raw native engine crJSON output
+credentialctl validate video.mp4 --raw
+
 # Explicit MIME type specification
 credentialctl validate asset.bin --media-type image/webp
 ```
@@ -104,7 +107,7 @@ Upon launching `credentialctl tui`, the application discovers media assets and v
 ### File Inspector View
 The File Inspector presents five navigable tabs for detailed forensic review:
 1. **Overview:** Summarizes file attributes, claim generator version, active manifest label, and overall validity status.
-2. **Assertions:** Lists attached assertions such as actions (`c2pa.created`, `c2pa.edited`), data hash exclusions, and input ingredients.
+2. **Assertions:** Lists attached assertions such as actions (`c2pa.created`, `c2pa.edited`), digital source types (such as `trainedAlgorithmicMedia` for AI generation or SynthID watermarking), data hash exclusions, and input ingredients.
 3. **Signature:** Displays cryptographic signing algorithms (e.g. ES256), signing timestamps, issuer authorities, and certificate serial numbers.
 4. **Validation:** Details individual check statuses, validation codes, severity indicators (`INFO`, `WARN`, `ERROR`), and spec URI references.
 5. **Raw crJSON:** Provides a scrollable viewport rendering the complete JSON payload.

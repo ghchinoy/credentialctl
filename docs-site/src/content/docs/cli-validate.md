@@ -53,11 +53,17 @@ Output payload:
 }
 ```
 
+### Raw crJSON Output
+```bash
+credentialctl validate photo.jpg --raw
+```
+
 ## Flags
 
 | Flag | Description | Default |
 |---|---|---|
 | `--json` | Output structured JSON for machine and agent parsing | `false` |
+| `--raw` | Output raw native engine crJSON payload directly | `false` |
 | `--media-type` | Explicitly specify IANA media type (e.g. `image/jpeg`) | auto-detected |
 | `--skip-trust-checks` | Skip certificate trust anchor validation for local verification | `true` |
 
