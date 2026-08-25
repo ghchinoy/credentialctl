@@ -57,7 +57,7 @@ make clean
 make release-snapshot
 ```
 
-> **Note:** Building and testing requires `CGO_ENABLED=1` and the native library `libcredentio_c` staged in `../credentio-contributions/go/lib`.
+> **Note:** Building and testing requires `CGO_ENABLED=1` and the prebuilt native library `libcredentio_c` (downloaded automatically via `make fetch-credentio-lib` from GitHub Releases).
 
 ---
 

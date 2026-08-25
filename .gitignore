@@ -1,6 +1,7 @@
 # Binaries and build outputs
 bin/
 dist/
+third_party/credentio/lib/
 *.exe
 *.exe~
 *.dll

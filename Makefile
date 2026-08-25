@@ -1,28 +1,31 @@
-.PHONY: build test run clean tidy build-deps release-snapshot
+.PHONY: build test run clean tidy fetch-credentio-lib release-snapshot docs-dev docs-build
+
+# CGO compilation and linking flags for prebuilt Credentio C-ABI library
+CGO_CFLAGS ?= -I$(PWD)/third_party/credentio/include
+CGO_LDFLAGS ?= -L$(PWD)/third_party/credentio/lib -lcredentio_c -Wl,-rpath,@loader_path -Wl,-rpath,$(PWD)/third_party/credentio/lib
 
 # Default build binary
-build:
-	CGO_ENABLED=1 go build -ldflags="-s -w" -o bin/credentialctl main.go
+build: fetch-credentio-lib
+	CGO_ENABLED=1 CGO_CFLAGS="$(CGO_CFLAGS)" CGO_LDFLAGS="$(CGO_LDFLAGS)" go build -ldflags="-s -w" -o bin/credentialctl main.go
 
-test:
-	CGO_ENABLED=1 go test -v ./...
+test: fetch-credentio-lib
+	CGO_ENABLED=1 CGO_CFLAGS="$(CGO_CFLAGS)" CGO_LDFLAGS="$(CGO_LDFLAGS)" go test -v ./...
 
-run:
-	CGO_ENABLED=1 go run main.go
+run: fetch-credentio-lib
+	CGO_ENABLED=1 CGO_CFLAGS="$(CGO_CFLAGS)" CGO_LDFLAGS="$(CGO_LDFLAGS)" go run main.go
 
 tidy:
 	go mod tidy
 
-# Build native library dependencies from credentio source if needed
-build-deps:
-	@echo "Checking native libcredentio_c build..."
-	@if [ ! -f ../credentio-contributions/go/lib/libcredentio_c.dylib ] && [ ! -f ../credentio-contributions/go/lib/libcredentio_c.so ]; then \
-		echo "Building native library via credentio-contributions scripts..."; \
-		cd ../credentio-contributions && ./scripts/build-shared-lib.sh; \
+# Download prebuilt native library from GitHub Releases if missing
+fetch-credentio-lib:
+	@if [ ! -f third_party/credentio/lib/libcredentio_c.dylib ] && [ ! -f third_party/credentio/lib/libcredentio_c.so ]; then \
+		echo "Fetching prebuilt native Credentio library..."; \
+		./scripts/fetch-credentio-lib.sh; \
 	fi
 
 # GoReleaser snapshot build
-release-snapshot: build-deps
+release-snapshot: fetch-credentio-lib
 	goreleaser release --snapshot --clean
 
 # Documentation site
@@ -33,4 +36,4 @@ docs-build:
 	cd docs-site && npm run build
 
 clean:
-	rm -rf bin/ dist/ docs-site/dist/ docs-site/.astro/
+	rm -rf bin/ dist/ third_party/credentio/lib/ docs-site/dist/ docs-site/.astro/

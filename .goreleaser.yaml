@@ -4,7 +4,7 @@ project_name: credentialctl
 
 before:
   hooks:
-    - make build-deps
+    - make fetch-credentio-lib
 
 builds:
   - id: credentialctl-darwin-arm64
@@ -16,6 +16,8 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=1
+      - CGO_CFLAGS=-I{{.Env.PWD}}/third_party/credentio/include
+      - CGO_LDFLAGS=-L{{.Env.PWD}}/third_party/credentio/lib -lcredentio_c -Wl,-rpath,@loader_path
     ldflags:
       - -s -w
       - -X main.version={{.Version}}
@@ -26,8 +28,8 @@ archives:
     files:
       - README.md
       - LICENSE
-      - ../credentio-contributions/go/lib/libcredentio_c.dylib
-      - ../credentio-contributions/go/lib/libcredentio_c.so
+      - src: third_party/credentio/lib/libcredentio_c.dylib
+        dst: ./
 
 checksum:
   name_template: 'checksums.txt'

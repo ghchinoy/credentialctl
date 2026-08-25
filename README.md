@@ -20,7 +20,7 @@ A command-line tool and interactive terminal interface to validate and inspect C
 
 ## Quick Installation
 
-Build the binary directly from source:
+Build the binary directly from source (downloads the prebuilt Credentio C-ABI library automatically):
 
 ```bash
 git clone https://github.com/ghchinoy/credentialctl.git
@@ -66,9 +66,9 @@ To output structured JSON for agent and pipeline automation:
 ## Local Development Setup
 
 ### Prerequisites
-- Go 1.26 or newer
+- Go 1.22 or newer
 - CGO enabled (`CGO_ENABLED=1`)
-- Native `libcredentio_c` staged in `../credentio-contributions/go/lib`
+- Prebuilt `libcredentio_c` (downloaded automatically via `make fetch-credentio-lib` from GitHub Releases)
 
 ### Development Commands
 
