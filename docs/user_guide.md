@@ -141,4 +141,4 @@ fi
 - **Standalone Manifests:** C2PA manifest stores (`.c2pa`)
 
 ### Dynamic Library Loading on macOS
-If execution fails with `dyld: Library not loaded: @rpath/libcredentio_c.dylib`, ensure `credentialctl` was compiled with `CGO_ENABLED=1` and that the shared library exists in `../credentio-contributions/go/lib/libcredentio_c.dylib`.
+If execution fails with `dyld: Library not loaded: @rpath/libcredentio_c.dylib`, ensure `credentialctl` was compiled with `CGO_ENABLED=1` and run `make fetch-credentio-lib` to stage the prebuilt native library into `third_party/credentio/lib/libcredentio_c.dylib`. Release archives bundle the dynamic library directly beside the executable using `@loader_path`.

@@ -17,18 +17,36 @@ dyld: Library not loaded: @rpath/libcredentio_c.dylib
 macOS System Integrity Protection (SIP) prevents child processes and subshells from inheriting `DYLD_LIBRARY_PATH`. When Go compiles binaries without embedded runtime paths (`rpath`), the dynamic linker fails to locate `libcredentio_c.dylib`.
 
 ### The Solution
-Ensure your build environment enables CGO and uses embedded rpaths:
+Compile using `make build` (or `make fetch-credentio-lib`), which automatically injects required CGO include flags and `@loader_path` rpaths:
 ```bash
-CGO_ENABLED=1 go build -ldflags="-s -w" -o bin/credentialctl main.go
+make build
 ```
-The Go bindings in `credentio-contributions` embed `-Wl,-rpath,${SRCDIR}/lib` in `#cgo darwin LDFLAGS`.
+`credentialctl` links against the prebuilt dynamic library in `third_party/credentio/lib/` and embeds `@loader_path`, allowing the compiled binary to locate `libcredentio_c.dylib` directly beside the executable.
+
+---
+
+## Benign Linker Warnings During Build
+
+When building with `make build`, the linker may output informational warnings:
+
+```text
+ld: warning: duplicate -rpath '@loader_path' ignored
+ld: warning: duplicate -rpath '.../third_party/credentio/lib' ignored
+ld: warning: ignoring duplicate libraries: '-lcredentio_c'
+ld: warning: search path '.../go@v0.1.1/lib' not found
+ld: warning: search path '.../go@v0.1.1/../native' not found
+```
+
+These warnings are harmless:
+- **Duplicate flags:** The Makefile explicitly prepends required Credentio flags, and the linker safely deduplicates them.
+- **Module cache paths:** The upstream Go module defines development search paths (`${SRCDIR}/lib`) that are inert when consuming prebuilt releases from the Go module cache. The library is resolved from `third_party/credentio/lib/`.
 
 ---
 
 ## CGO Compilation Requirements
 
 Because `credentialctl` links directly against the native C-ABI wrapper:
-- Always set `CGO_ENABLED=1` when running `go build`, `go test`, or `go run`.
+- Always set `CGO_ENABLED=1` when running `go build`, `go test`, or `go run` (handled automatically by `Makefile` targets).
 - Verify that clang or gcc is available in your shell environment (`xcode-select --install` on macOS).
 
 ---

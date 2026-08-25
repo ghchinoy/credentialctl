@@ -8,9 +8,9 @@ description: Get up and running with credentialctl in minutes.
 ## Prerequisites
 
 Before building `credentialctl`, ensure your system meets the following requirements:
-- **Go:** Version 1.26 or newer.
+- **Go:** Version 1.22 or newer.
 - **CGO:** Enabled (`CGO_ENABLED=1`).
-- **Native Library:** The `libcredentio_c.dylib` (macOS) or `libcredentio_c.so` (Linux) shared library staged in `../credentio-contributions/go/lib`.
+- **Native Library:** The prebuilt `libcredentio_c.dylib` (macOS) or `libcredentio_c.so` (Linux) shared library, downloaded automatically by `make build` (or `make fetch-credentio-lib`) into `third_party/credentio/lib`.
 
 ## Installation
 
