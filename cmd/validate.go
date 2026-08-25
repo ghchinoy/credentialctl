@@ -168,12 +168,19 @@ func renderHumanValidation(report *credentio.ProvenanceReport, absPath string, s
 			issuer = m.Signature.Issuer
 		}
 		spec := report.SpecVersion
-		if spec == "" {
-			spec = "—"
+		formatSpec := m.Format
+		if formatSpec == "" {
+			formatSpec = report.MediaType
+		}
+		if spec != "" && spec != "—" {
+			formatSpec = fmt.Sprintf("%s (C2PA %s)", formatSpec, spec)
+		}
+		if formatSpec == "" {
+			formatSpec = "—"
 		}
 		renderRow("Generator", theme.StyleAccent.Render(gen))
 		renderRow("Signer", theme.StylePass.Render(issuer))
-		renderRow("Format/Spec", fmt.Sprintf("%s (C2PA %s)", m.Format, spec))
+		renderRow("Format/Spec", formatSpec)
 		renderRow("Assertions", fmt.Sprintf("%d attached", len(m.Assertions)))
 		renderRow("Validation", fmt.Sprintf("%d reported", len(m.ValidationStatuses)))
 	}
