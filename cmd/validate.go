@@ -29,6 +29,7 @@ import (
 
 var (
 	validateJSON      bool
+	validateRaw       bool
 	validateMediaType string
 )
 
@@ -96,6 +97,11 @@ and assertions embedded within a single target media asset file.`,
 		report, err := validator.ValidateFile(absPath, validateMediaType)
 		if err != nil {
 			return fmt.Errorf("validation execution failed: %w", err)
+		}
+
+		if validateRaw {
+			fmt.Println(report.RawJSON)
+			return nil
 		}
 
 		if validateJSON {
@@ -183,5 +189,6 @@ func renderHumanValidation(report *credentio.ProvenanceReport, absPath string, s
 func init() {
 	rootCmd.AddCommand(validateCmd)
 	validateCmd.Flags().BoolVar(&validateJSON, "json", false, "Output structured JSON for machine/agent parsing")
+	validateCmd.Flags().BoolVar(&validateRaw, "raw", false, "Print raw crJSON payload returned by native engine")
 	validateCmd.Flags().StringVar(&validateMediaType, "media-type", "", "Explicit IANA media type (e.g. image/jpeg)")
 }
