@@ -1,18 +1,18 @@
 .PHONY: build test run clean tidy fetch-credentio-lib release-snapshot docs-dev docs-build
 
 # CGO compilation and linking flags for prebuilt Credentio C-ABI library
-CGO_CFLAGS ?= -I$(PWD)/third_party/credentio/include
-CGO_LDFLAGS ?= -L$(PWD)/third_party/credentio/lib -lcredentio_c -Wl,-rpath,@loader_path -Wl,-rpath,$(PWD)/third_party/credentio/lib
+CREDENTIO_CFLAGS := -I$(PWD)/third_party/credentio/include
+CREDENTIO_LDFLAGS := -L$(PWD)/third_party/credentio/lib -lcredentio_c -Wl,-rpath,@loader_path -Wl,-rpath,$(PWD)/third_party/credentio/lib
 
 # Default build binary
 build: fetch-credentio-lib
-	CGO_ENABLED=1 CGO_CFLAGS="$(CGO_CFLAGS)" CGO_LDFLAGS="$(CGO_LDFLAGS)" go build -ldflags="-s -w" -o bin/credentialctl main.go
+	CGO_ENABLED=1 CGO_CFLAGS="$(CREDENTIO_CFLAGS) $(CGO_CFLAGS)" CGO_LDFLAGS="$(CREDENTIO_LDFLAGS) $(CGO_LDFLAGS)" go build -ldflags="-s -w" -o bin/credentialctl main.go
 
 test: fetch-credentio-lib
-	CGO_ENABLED=1 CGO_CFLAGS="$(CGO_CFLAGS)" CGO_LDFLAGS="$(CGO_LDFLAGS)" go test -v ./...
+	CGO_ENABLED=1 CGO_CFLAGS="$(CREDENTIO_CFLAGS) $(CGO_CFLAGS)" CGO_LDFLAGS="$(CREDENTIO_LDFLAGS) $(CGO_LDFLAGS)" go test -v ./...
 
 run: fetch-credentio-lib
-	CGO_ENABLED=1 CGO_CFLAGS="$(CGO_CFLAGS)" CGO_LDFLAGS="$(CGO_LDFLAGS)" go run main.go
+	CGO_ENABLED=1 CGO_CFLAGS="$(CREDENTIO_CFLAGS) $(CGO_CFLAGS)" CGO_LDFLAGS="$(CREDENTIO_LDFLAGS) $(CGO_LDFLAGS)" go run main.go
 
 tidy:
 	go mod tidy
