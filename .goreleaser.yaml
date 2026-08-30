@@ -7,32 +7,55 @@ before:
     - make fetch-credentio-lib
 
 builds:
-  - id: credentialctl-darwin-arm64
+  - id: credentialctl
     main: ./main.go
     binary: credentialctl
-    goos:
-      - darwin
-    goarch:
-      - arm64
+    targets:
+      - darwin_arm64
     env:
       - CGO_ENABLED=1
-      - CGO_CFLAGS=-I{{.Env.PWD}}/third_party/credentio/include
-      - CGO_LDFLAGS=-L{{.Env.PWD}}/third_party/credentio/lib -lcredentio_c -Wl,-rpath,@loader_path
+      - CGO_CFLAGS=-I{{ .Env.PWD }}/third_party/credentio/include
+      - CGO_LDFLAGS=-L{{ .Env.PWD }}/third_party/credentio/lib -lcredentio_c {{- if eq .Os "darwin" }} -Wl,-rpath,@loader_path -Wl,-rpath,@executable_path -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/lib -Wl,-rpath,@loader_path/../third_party/credentio/lib{{ else }} -Wl,-rpath,$ORIGIN -Wl,-rpath,$ORIGIN/../lib -Wl,-rpath,$ORIGIN/lib -Wl,-rpath,$ORIGIN/../third_party/credentio/lib{{ end }}
     ldflags:
       - -s -w
-      - -X main.version={{.Version}}
+      - -X github.com/ghchinoy/credentialctl/cmd.version={{.Version}}
+      - -X github.com/ghchinoy/credentialctl/cmd.commit={{.Commit}}
+      - -X github.com/ghchinoy/credentialctl/cmd.date={{.Date}}
 
 archives:
-  - format: tar.gz
+  - id: credentialctl
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - tar.gz
     files:
       - README.md
-      - LICENSE
-      - src: third_party/credentio/lib/libcredentio_c.dylib
+      - LICENSE*
+      - src: third_party/credentio/lib/libcredentio_c.*
         dst: ./
+        strip_parent: true
+
+brews:
+  - name: credentialctl
+    directory: Formula
+    repository:
+      owner: ghchinoy
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/ghchinoy/credentialctl"
+    description: "C2PA Content Credentials validation and inspection tool with interactive TUI"
+    license: "Apache-2.0"
+    install: |
+      bin.install "credentialctl"
+      if OS.mac?
+        lib.install "libcredentio_c.dylib"
+      elsif OS.linux?
+        lib.install "libcredentio_c.so"
+      end
+    test: |
+      assert_match "credentialctl version", shell_output("#{bin}/credentialctl --version")
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
@@ -41,5 +64,10 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
+
+release:
+  github:
+    owner: ghchinoy
+    name: credentialctl

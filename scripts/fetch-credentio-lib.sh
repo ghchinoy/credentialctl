@@ -21,73 +21,68 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-VERSION="${1:-0.1.2}"
+VERSION="${1:-0.1.5}"
 VERSION="${VERSION#v}" # strip leading v if provided
 
 REPO="ghchinoy/credentio-contributions"
 BASE_URL="https://github.com/${REPO}/releases/download/v${VERSION}"
-
-# Detect OS and Arch
-OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
-ARCH="$(uname -m)"
-
-case "${ARCH}" in
-  x86_64|amd64)
-    ARCH_NAME="amd64"
-    ;;
-  arm64|aarch64)
-    ARCH_NAME="arm64"
-    ;;
-  *)
-    echo "ERROR: Unsupported architecture: ${ARCH}" >&2
-    exit 1
-    ;;
-esac
-
-case "${OS}" in
-  darwin)
-    EXT="dylib"
-    PLATFORM="darwin-${ARCH_NAME}"
-    ;;
-  linux)
-    EXT="so"
-    PLATFORM="linux-${ARCH_NAME}"
-    ;;
-  *)
-    echo "ERROR: Unsupported OS: ${OS}" >&2
-    exit 1
-    ;;
-esac
-
-TARGET_LIB="libcredentio_c.${EXT}"
-DOWNLOAD_URL="${BASE_URL}/libcredentio_c-${PLATFORM}.${EXT}"
 OUTPUT_DIR="${REPO_DIR}/third_party/credentio/lib"
-OUTPUT_FILE="${OUTPUT_DIR}/${TARGET_LIB}"
-
-echo "=== Fetching prebuilt Credentio library for ${PLATFORM} (v${VERSION}) ==="
-echo "Downloading: ${DOWNLOAD_URL}"
 
 mkdir -p "${OUTPUT_DIR}"
 
-TMP_FILE="$(mktemp /tmp/credentio-lib.XXXXXX)"
-trap 'rm -f "${TMP_FILE}"' EXIT
+echo "=== Fetching prebuilt Credentio native libraries (v${VERSION}) ==="
 
-if curl -fL --progress-bar -o "${TMP_FILE}" "${DOWNLOAD_URL}"; then
-  echo "==> Download completed successfully."
-else
-  # Fallback to direct library filename
-  FALLBACK_URL="${BASE_URL}/${TARGET_LIB}"
-  echo "==> Trying release asset fallback: ${FALLBACK_URL}"
-  if ! curl -fL --progress-bar -o "${TMP_FILE}" "${FALLBACK_URL}"; then
-    echo "ERROR: Failed to download libcredentio_c from release v${VERSION}." >&2
-    echo "Check release assets at https://github.com/${REPO}/releases/tag/v${VERSION}" >&2
-    exit 1
+fetch_asset() {
+  local asset_name="$1"
+  local target_name="$2"
+  local download_url="${BASE_URL}/${asset_name}"
+  local output_file="${OUTPUT_DIR}/${target_name}"
+  local tmp_file
+  tmp_file="$(mktemp /tmp/credentio-lib.XXXXXX)"
+
+  echo "Downloading: ${download_url} -> ${target_name}"
+  if curl -fL --progress-bar -o "${tmp_file}" "${download_url}"; then
+    cp -f "${tmp_file}" "${output_file}"
+    chmod 755 "${output_file}"
+    rm -f "${tmp_file}"
+    echo "==> Staged ${target_name} successfully."
+  else
+    rm -f "${tmp_file}"
+    echo "WARNING: Failed to download ${asset_name} from v${VERSION}." >&2
+    return 1
   fi
+}
+
+# Fetch Darwin arm64 asset
+fetch_asset "libcredentio_c-darwin-arm64.dylib" "libcredentio_c.dylib" || true
+if [ -f "${OUTPUT_DIR}/libcredentio_c.dylib" ]; then
+  cp -f "${OUTPUT_DIR}/libcredentio_c.dylib" "${OUTPUT_DIR}/libcredentio_c-darwin-arm64.dylib"
 fi
 
-cp -f "${TMP_FILE}" "${OUTPUT_FILE}"
-chmod 755 "${OUTPUT_FILE}"
+# Fetch Linux amd64 asset
+fetch_asset "libcredentio_c-linux-amd64.so" "libcredentio_c.so" || true
+if [ -f "${OUTPUT_DIR}/libcredentio_c.so" ]; then
+  cp -f "${OUTPUT_DIR}/libcredentio_c.so" "${OUTPUT_DIR}/libcredentio_c-linux-amd64.so"
+fi
+
+# Verify host platform library is present
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+case "${OS}" in
+  darwin)
+    if [ ! -f "${OUTPUT_DIR}/libcredentio_c.dylib" ]; then
+      echo "ERROR: libcredentio_c.dylib is required on Darwin but was not staged." >&2
+      exit 1
+    fi
+    ;;
+  linux)
+    if [ ! -f "${OUTPUT_DIR}/libcredentio_c.so" ]; then
+      echo "ERROR: libcredentio_c.so is required on Linux but was not staged." >&2
+      exit 1
+    fi
+    ;;
+esac
 
 echo "======================================================="
-echo "SUCCESS: Staged ${TARGET_LIB} into ${OUTPUT_FILE}"
+echo "SUCCESS: Staged Credentio native libraries in ${OUTPUT_DIR}"
+ls -lh "${OUTPUT_DIR}"
 echo "======================================================="

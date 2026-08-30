@@ -27,7 +27,6 @@ import (
 )
 
 var (
-	version         = "0.1.0"
 	skipTrustChecks bool
 )
 
@@ -109,6 +108,11 @@ func init() {
 		ID:    "interactive",
 		Title: "Interactive TUI Commands:",
 	})
+
+	rootCmd.Version = version
+	rootCmd.SetVersionTemplate("credentialctl version {{.Version}}\n")
+	rootCmd.Flags().BoolP("version", "v", false, "Show credentialctl version")
+	rootCmd.SilenceErrors = true
 
 	rootCmd.PersistentFlags().BoolVar(&skipTrustChecks, "skip-trust-checks", true, "Skip certificate trust checks for local verification")
 }

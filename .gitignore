@@ -7,12 +7,18 @@ third_party/credentio/lib/
 *.dll
 *.so
 *.dylib
+*.tar.gz
+*.zip
+.tmp/
 
 # Test artifacts and coverage
 *.test
 *.out
 coverage.txt
 profile.pprof
+
+# Teamwork and agent scratch directories
+.agents/
 
 # Go workspace
 go.work

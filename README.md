@@ -1,6 +1,6 @@
 # credentialctl
 
-A command-line tool and interactive terminal interface to validate and inspect C2PA content credentials in media files.
+A command-line utility and interactive terminal interface to validate and inspect Coalition for Content Provenance and Authenticity (C2PA) Content Credentials in media files.
 
 `credentialctl` validates manifests, digital signatures, certificate chains, and assertions in images, videos, and audio. It is powered by Google Credentio native C-ABI bindings.
 
@@ -13,6 +13,7 @@ A command-line tool and interactive terminal interface to validate and inspect C
 - [Publish and Release Process](#publish-and-release-process)
 - [Contributing](#contributing)
 - [Features and TUI Controls](#features-and-tui-controls)
+- [Command Reference and Exit Codes](#command-reference-and-exit-codes)
 - [Documentation](#documentation)
 - [License](#license)
 
@@ -20,7 +21,31 @@ A command-line tool and interactive terminal interface to validate and inspect C
 
 ## Quick Installation
 
-Build the binary directly from source (downloads the prebuilt Credentio C-ABI library automatically):
+### Install via Homebrew Tap (macOS and Linux)
+
+Install `credentialctl` using the official Homebrew tap:
+
+```bash
+# Add the tap and install
+brew tap ghchinoy/tap
+brew install credentialctl
+```
+
+Or install directly in a single command:
+
+```bash
+brew install ghchinoy/tap/credentialctl
+```
+
+Verify your installation and runtime engine version:
+
+```bash
+credentialctl version --json
+```
+
+### Build from Source
+
+You can also compile `credentialctl` directly from source:
 
 ```bash
 git clone https://github.com/ghchinoy/credentialctl.git
@@ -28,7 +53,7 @@ cd credentialctl
 make build
 ```
 
-The compiled executable is placed at `bin/credentialctl`.
+The build process automatically downloads the prebuilt Credentio C-ABI shared library via `scripts/fetch-credentio-lib.sh` and outputs the executable binary to `bin/credentialctl`.
 
 ---
 
@@ -37,7 +62,7 @@ The compiled executable is placed at `bin/credentialctl`.
 Validate any media file with a single command:
 
 ```bash
-./bin/credentialctl validate sample.jpg
+credentialctl validate sample.jpg
 ```
 
 Output:
@@ -55,16 +80,52 @@ Output:
   Wall Time:       4.61 ms
 ```
 
-To output structured JSON for agent and pipeline automation:
+### Structured JSON Output for Agents and Pipelines
+
+Output structured JSON data for automated scripts and coding agents:
 
 ```bash
-./bin/credentialctl validate sample.jpg --json
+credentialctl validate sample.jpg --json | jq .
 ```
 
-To output raw native engine crJSON directly:
+### Raw Native Engine crJSON
+
+Extract the raw C2PA manifest JSON payload directly from the underlying engine:
 
 ```bash
-./bin/credentialctl validate sample.jpg --raw
+credentialctl validate sample.jpg --raw
+```
+
+### Deep Manifest Inspection
+
+Inspect detailed assertions, signing certificates, and validation check items:
+
+```bash
+credentialctl inspect artwork.png
+```
+
+### Batch Directory Validation
+
+Scan and validate all media assets in a directory:
+
+```bash
+credentialctl folder ./media
+```
+
+### Interactive TUI Launcher
+
+Launch the full-screen terminal interface to browse folders and inspect credentials:
+
+```bash
+credentialctl tui ./media
+```
+
+### Version and Runtime Engine Observability
+
+Display CLI build metadata and runtime C-ABI engine information:
+
+```bash
+credentialctl version
 ```
 
 ---
@@ -73,22 +134,24 @@ To output raw native engine crJSON directly:
 
 ### Prerequisites
 - Go 1.22 or newer
-- CGO enabled (`CGO_ENABLED=1`)
-- Prebuilt `libcredentio_c` (downloaded automatically via `make fetch-credentio-lib` from GitHub Releases)
+- CGO enabled (`CGO_ENABLED=1`) with a local C toolchain (Clang or GCC)
+- Prebuilt `libcredentio_c` shared library (staged automatically via `make fetch-credentio-lib`)
 
 ### Development Commands
 
-Clone the repository and run the test suite:
+Stage native dependencies, build binaries, and run the test suite:
 
 ```bash
-git clone https://github.com/ghchinoy/credentialctl.git
-cd credentialctl
+# Fetch prebuilt C-ABI shared libraries and headers
+make fetch-credentio-lib
+
+# Build the executable binary with embedded dynamic RPATHs
+make build
+
+# Run unit, integration, and E2E test suites
 make test
-```
 
-Launch the interactive interface directly from source:
-
-```bash
+# Launch the interactive interface directly from source
 make run
 ```
 
@@ -96,26 +159,37 @@ make run
 
 ## Publish and Release Process
 
-Maintainers package release binaries using GoReleaser:
+`credentialctl` uses GoReleaser and GitHub Actions to automate multi-platform binary compilation, dynamic library packaging, and Homebrew tap formula distribution.
+
+### Local Snapshot Release Testing
+
+Maintainers can test packaging and archive generation locally:
 
 ```bash
-# Build local snapshot archives
+# Package local release snapshot archives in dist/
 make release-snapshot
 ```
 
-Artifacts and checksums are generated in the `dist/` directory.
+### Automated Production Releases
+
+Pushing a semantic version tag (such as `v0.1.5`) triggers `.github/workflows/release.yaml` to build release artifacts, generate SHA-256 checksums, publish GitHub Releases, and update the formula in `ghchinoy/homebrew-tap`.
+
+For full release runbooks, secret configuration, and rollback procedures, consult the [Release Guide](docs/RELEASING.md).
 
 ---
 
 ## Contributing
 
-Pull requests and issue reports are welcome. For major architectural changes or new command additions, please open an issue first to discuss the design.
+Contributions are welcome. Please open an issue first to discuss substantial architectural modifications or new subcommand designs.
 
-Ensure all unit tests pass before submitting changes:
+### Pre-Submission Checklist
 
-```bash
-make test
-```
+Before submitting a pull request, ensure all changes pass verification:
+
+1. Run the test suite: `make test`
+2. Compile and verify binary linkage: `make build && otool -L bin/credentialctl`
+3. Test release snapshot packaging: `make release-snapshot`
+4. Confirm documentation adheres to house style rules (zero em dashes in prose, active voice)
 
 ---
 
@@ -125,10 +199,10 @@ make test
 
 ### Interactive TUI Navigation
 
-Launch the full-screen interface on any folder:
+Launch the full-screen interface on any target directory:
 
 ```bash
-./bin/credentialctl tui /path/to/media
+credentialctl tui /path/to/media
 ```
 
 | Keybinding | Action |
@@ -144,9 +218,23 @@ Launch the full-screen interface on any folder:
 
 ---
 
+## Command Reference and Exit Codes
+
+Automation scripts and agent workers can inspect process exit codes to determine asset authenticity:
+
+| Exit Code | Meaning | Description |
+|---|---|---|
+| `0` | `SIGNED` | Valid C2PA content credentials present and verified |
+| `1` | `UNSIGNED` | No C2PA credentials found in asset |
+| `2` | `INVALID` | Corrupted, invalid, or failing credential manifest |
+| `3` | `ERROR` | Input error, unsupported media format, or file not found |
+
+---
+
 ## Documentation
 
-For comprehensive command documentation, JSON schema definitions, and workflow recipes, consult the [User Guide](docs/user_guide.md).
+- [User Guide](docs/user_guide.md): Forensic CLI workflows, TUI inspection tabs, JSON schemas, and troubleshooting.
+- [Release Guide](docs/RELEASING.md): Release lifecycle, GitHub Actions automation, Homebrew tap updates, and rollback procedures.
 
 ---
 
