@@ -5,16 +5,32 @@ description: Get up and running with credentialctl in minutes.
 
 `credentialctl` provides both automated command-line validation and an interactive terminal interface for inspecting Coalition for Content Provenance and Authenticity (C2PA) credentials.
 
-## Prerequisites
-
-Before building `credentialctl`, ensure your system meets the following requirements:
-- **Go:** Version 1.22 or newer.
-- **CGO:** Enabled (`CGO_ENABLED=1`).
-- **Native Library:** The prebuilt `libcredentio_c.dylib` (macOS) or `libcredentio_c.so` (Linux) shared library, downloaded automatically by `make build` (or `make fetch-credentio-lib`) into `third_party/credentio/lib`.
-
 ## Installation
 
-Clone the repository and compile the binary:
+### Via Homebrew (Recommended on macOS)
+
+Install `credentialctl` using Homebrew from the official tap:
+
+```bash
+brew tap ghchinoy/tap
+brew install credentialctl
+```
+
+Verify your installation:
+
+```bash
+credentialctl version
+```
+
+> If you previously tapped `ghchinoy/tap`, run `brew update` to refresh the tap formula index.
+
+### Build from Source
+
+For local development or building from source:
+
+1. **Go:** Version 1.22 or newer.
+2. **CGO:** Enabled (`CGO_ENABLED=1`).
+3. Clone and compile:
 
 ```bash
 git clone https://github.com/ghchinoy/credentialctl.git

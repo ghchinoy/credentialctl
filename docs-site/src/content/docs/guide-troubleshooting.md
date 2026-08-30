@@ -33,8 +33,8 @@ When building with `make build`, the linker may output informational warnings:
 ld: warning: duplicate -rpath '@loader_path' ignored
 ld: warning: duplicate -rpath '.../third_party/credentio/lib' ignored
 ld: warning: ignoring duplicate libraries: '-lcredentio_c'
-ld: warning: search path '.../go@v0.1.1/lib' not found
-ld: warning: search path '.../go@v0.1.1/../native' not found
+ld: warning: search path '.../go@v0.1.5/lib' not found
+ld: warning: search path '.../go@v0.1.5/../native' not found
 ```
 
 These warnings are harmless:
