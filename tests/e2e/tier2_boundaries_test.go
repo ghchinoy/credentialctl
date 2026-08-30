@@ -697,8 +697,7 @@ func TestTier2_F9_README_LicenseLinkAndBadge(t *testing.T) {
 // ============================================================================
 
 func TestTier2_F10_SnapshotBuild_ArchiveRootFilePlacement(t *testing.T) {
-	root := RepoRoot(t)
-	distDir := filepath.Join(root, "dist")
+	distDir := EnsureSnapshotDist(t)
 	entries, err := os.ReadDir(distDir)
 	if err != nil {
 		t.Fatalf("failed to read dist/: %v", err)
@@ -732,8 +731,7 @@ func TestTier2_F10_SnapshotBuild_ArchiveRootFilePlacement(t *testing.T) {
 }
 
 func TestTier2_F10_SnapshotBuild_ArchivePreservesExecBit(t *testing.T) {
-	root := RepoRoot(t)
-	distDir := filepath.Join(root, "dist")
+	distDir := EnsureSnapshotDist(t)
 	entries, err := os.ReadDir(distDir)
 	if err != nil {
 		t.Fatalf("failed to read dist/: %v", err)
@@ -762,8 +760,8 @@ func TestTier2_F10_SnapshotBuild_ArchivePreservesExecBit(t *testing.T) {
 }
 
 func TestTier2_F10_SnapshotBuild_ChecksumFormat64Hex(t *testing.T) {
-	root := RepoRoot(t)
-	checksumsPath := filepath.Join(root, "dist", "checksums.txt")
+	distDir := EnsureSnapshotDist(t)
+	checksumsPath := filepath.Join(distDir, "checksums.txt")
 	data, err := os.ReadFile(checksumsPath)
 	if err != nil {
 		t.Fatalf("failed to read checksums.txt: %v", err)
@@ -779,8 +777,7 @@ func TestTier2_F10_SnapshotBuild_ChecksumFormat64Hex(t *testing.T) {
 }
 
 func TestTier2_F10_SnapshotBuild_TarGzHeaderIntegrity(t *testing.T) {
-	root := RepoRoot(t)
-	distDir := filepath.Join(root, "dist")
+	distDir := EnsureSnapshotDist(t)
 	entries, err := os.ReadDir(distDir)
 	if err != nil {
 		t.Fatalf("failed to read dist/: %v", err)
@@ -797,6 +794,9 @@ func TestTier2_F10_SnapshotBuild_TarGzHeaderIntegrity(t *testing.T) {
 }
 
 func TestTier2_F10_SnapshotBuild_CleanFlagRemovesPriorDist(t *testing.T) {
+	if _, err := exec.LookPath("goreleaser"); err != nil {
+		t.Skip("goreleaser binary not found in PATH; skipping clean test")
+	}
 	root := RepoRoot(t)
 	distDir := filepath.Join(root, "dist")
 	markerFile := filepath.Join(distDir, "stale_marker.tmp")

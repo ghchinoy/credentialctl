@@ -24,6 +24,12 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          install-only: true
+
       - name: Fetch Credentio native library
         run: |
           chmod +x scripts/fetch-credentio-lib.sh
@@ -37,3 +43,6 @@ jobs:
 
       - name: Verify CLI version
         run: ./bin/credentialctl version --json
+
+      - name: Test GoReleaser snapshot build
+        run: make release-snapshot

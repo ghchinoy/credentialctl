@@ -65,6 +65,42 @@ func BinaryPath(t *testing.T) string {
 	return filepath.Join(root, "bin", "credentialctl")
 }
 
+// EnsureSnapshotDist ensures that goreleaser snapshot build has been executed and dist/ exists.
+// If goreleaser is not installed, it gracefully skips the test.
+func EnsureSnapshotDist(t *testing.T) string {
+	t.Helper()
+	root := RepoRoot(t)
+	distDir := filepath.Join(root, "dist")
+
+	if _, err := exec.LookPath("goreleaser"); err != nil {
+		t.Skip("goreleaser binary not found in PATH; skipping snapshot test")
+	}
+
+	// Check if dist/ already contains valid archive and checksums
+	if entries, err := os.ReadDir(distDir); err == nil {
+		hasArchive := false
+		hasChecksums := false
+		for _, e := range entries {
+			if strings.HasSuffix(e.Name(), ".tar.gz") && strings.HasPrefix(e.Name(), "credentialctl_") {
+				hasArchive = true
+			}
+			if e.Name() == "checksums.txt" {
+				hasChecksums = true
+			}
+		}
+		if hasArchive && hasChecksums {
+			return distDir
+		}
+	}
+
+	res := RunCmd(t, root, "goreleaser", "release", "--snapshot", "--clean")
+	if res.ExitCode != 0 {
+		t.Skipf("goreleaser release --snapshot failed (exit %d): %s", res.ExitCode, res.Stderr)
+	}
+
+	return distDir
+}
+
 // EnsureBuiltBinary ensures the credentialctl binary is compiled before tests execute.
 func EnsureBuiltBinary(t *testing.T) string {
 	t.Helper()

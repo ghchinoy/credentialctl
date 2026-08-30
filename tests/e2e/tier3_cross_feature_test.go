@@ -191,8 +191,7 @@ func TestTier3_Pairwise7_README_GoReleaser_TapNameSync(t *testing.T) {
 // Pairwise 8: F10 (Snapshot Artifacts) + F3/F4/F5 (Binary/RPATH/Version)
 // Unpacks GoReleaser snapshot archive and verifies the packaged binary executes version --json cleanly
 func TestTier3_Pairwise8_SnapshotArchive_BinaryExecution_VersionJSON(t *testing.T) {
-	root := RepoRoot(t)
-	distDir := filepath.Join(root, "dist")
+	distDir := EnsureSnapshotDist(t)
 	entries, err := os.ReadDir(distDir)
 	if err != nil {
 		t.Fatalf("failed to read dist/: %v", err)

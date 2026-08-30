@@ -156,9 +156,12 @@ func TestTier4_Scenario2_SimulatedHomebrewCellarLayoutExecution(t *testing.T) {
 	t.Logf("Scenario 2 verified: Homebrew Cellar layout execution resolved @executable_path/../lib successfully.")
 }
 
-// Scenario 3: CI Release Snapshot Artifact & Archive Audit (F6, F7, F10)
+// Scenario 3: Continuous Integration Snapshot Release & Artifact Integrity Audit
 // Audits GoReleaser snapshot release archives, checksums, and package manifests
 func TestTier4_Scenario3_CIReleaseSnapshotArtifactAudit(t *testing.T) {
+	if _, err := exec.LookPath("goreleaser"); err != nil {
+		t.Skip("goreleaser binary not found in PATH; skipping Scenario 3 snapshot audit")
+	}
 	root := RepoRoot(t)
 
 	// Step 1: Execute snapshot release
