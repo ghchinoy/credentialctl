@@ -34,7 +34,7 @@ archives:
         dst: ./
         strip_parent: true
 
-homebrews:
+brews:
   - name: credentialctl
     directory: Formula
     repository:
