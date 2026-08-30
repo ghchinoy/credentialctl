@@ -14,8 +14,8 @@ builds:
       - darwin_arm64
     env:
       - CGO_ENABLED=1
-      - CGO_CFLAGS=-I{{ .Env.PWD }}/third_party/credentio/include
-      - CGO_LDFLAGS=-L{{ .Env.PWD }}/third_party/credentio/lib -lcredentio_c {{- if eq .Os "darwin" }} -Wl,-rpath,@loader_path -Wl,-rpath,@executable_path -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/lib -Wl,-rpath,@loader_path/../third_party/credentio/lib{{ else }} -Wl,-rpath,$ORIGIN -Wl,-rpath,$ORIGIN/../lib -Wl,-rpath,$ORIGIN/lib -Wl,-rpath,$ORIGIN/../third_party/credentio/lib{{ end }}
+      - CGO_CFLAGS=-I{{ if .Env.GITHUB_WORKSPACE }}{{ .Env.GITHUB_WORKSPACE }}{{ else if .Env.PWD }}{{ .Env.PWD }}{{ else }}.{{ end }}/third_party/credentio/include
+      - CGO_LDFLAGS=-L{{ if .Env.GITHUB_WORKSPACE }}{{ .Env.GITHUB_WORKSPACE }}{{ else if .Env.PWD }}{{ .Env.PWD }}{{ else }}.{{ end }}/third_party/credentio/lib -lcredentio_c {{- if eq .Os "darwin" }} -Wl,-rpath,@loader_path -Wl,-rpath,@executable_path -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/lib -Wl,-rpath,@loader_path/../third_party/credentio/lib{{ else }} -Wl,-rpath,$ORIGIN -Wl,-rpath,$ORIGIN/../lib -Wl,-rpath,$ORIGIN/lib -Wl,-rpath,$ORIGIN/../third_party/credentio/lib{{ end }}
     ldflags:
       - -s -w
       - -X github.com/ghchinoy/credentialctl/cmd.version={{.Version}}
@@ -34,7 +34,7 @@ archives:
         dst: ./
         strip_parent: true
 
-brews:
+homebrews:
   - name: credentialctl
     directory: Formula
     repository:

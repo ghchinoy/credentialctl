@@ -47,3 +47,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          PWD: ${{ github.workspace }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
