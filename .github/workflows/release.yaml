@@ -31,7 +31,7 @@ jobs:
       - name: Fetch Credentio native library
         run: |
           chmod +x scripts/fetch-credentio-lib.sh
-          ./scripts/fetch-credentio-lib.sh 0.1.5
+          ./scripts/fetch-credentio-lib.sh 0.2.0
 
       - name: Verify staged native library
         run: |
