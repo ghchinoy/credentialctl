@@ -93,6 +93,48 @@ credentialctl tui /path/to/assets -r
 
 ---
 
+### `keygen`
+Generates an EC P-256 test Public Key Infrastructure (PKI) bundle conforming to the C2PA X.509 certificate profile (C2PA claim signing EKU `1.3.6.1.4.1.62558.2.1` and critical RFC 3161 `timeStamping` EKU).
+
+```bash
+# Write PEM files to ./test_pki
+credentialctl keygen --out-dir ./test_pki
+
+# Custom organization subject and JSON output
+credentialctl keygen --out-dir ./my_pki --org "Acme Media Studio" --json
+```
+
+---
+
+### `sign`
+Embeds a C2PA manifest store into a media asset, signs it in-process, and immediately verifies the signed output.
+
+```bash
+# Sign using an ephemeral C2PA test key/certificate
+credentialctl sign photo.png -o signed.png
+
+# Sign using generated PKI, AI source type, and AI training opt-out assertion
+credentialctl sign art.png -o art_signed.png \
+  --key ./test_pki/claim_signer_key.pem \
+  --cert ./test_pki/claim_signer_cert.pem \
+  --tsa-key ./test_pki/tsa_key.pem \
+  --tsa-cert ./test_pki/tsa_cert.pem \
+  --source-type ai \
+  --ai-opt-out
+
+# Emit structured JSON summary
+credentialctl sign doc.pdf -o doc_signed.pdf --json
+```
+
+Supported `--source-type` shorthands:
+- `capture` (`http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture`)
+- `ai` (`http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia`)
+- `composite-ai` (`http://cv.iptc.org/newscodes/digitalsourcetype/compositeWithTrainedAlgorithmicMedia`)
+- `algorithmic` (`http://cv.iptc.org/newscodes/digitalsourcetype/algorithmicMedia`)
+- `creation` (`http://cv.iptc.org/newscodes/digitalsourcetype/digitalCreation`)
+
+---
+
 ## 3. Interactive Terminal Interface Guide
 
 The interactive interface organizes operations into two dedicated views.
@@ -120,7 +162,7 @@ Press `Esc` or `Backspace` at any time to return to the Folder Review view.
 
 `credentialctl` adheres to Agent-Aware CLI design conventions:
 - **Consistent JSON Serialization:** All data commands accept `--json`. Output payloads include engine timing, file metadata, and complete manifest structures.
-- **Cobra Grouping:** Commands are grouped logically into `validation`, `inspection`, and `interactive` categories.
+- **Cobra Grouping:** Commands are grouped logically into `validation`, `signing`, `inspection`, and `interactive` categories.
 - **Actionable Error Messages:** Errors provide prescriptive hints indicating proper path syntax or supported file extensions.
 
 Example pipeline validation command:

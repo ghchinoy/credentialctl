@@ -53,10 +53,10 @@ release-snapshot: fetch-credentio-lib
 
 # Documentation site
 docs-dev:
-	cd docs-site && npm run dev
+	cd docs-site && npm install && npm run dev
 
 docs-build:
-	cd docs-site && npm run build
+	cd docs-site && npm install && npm run build
 
 clean:
 	rm -rf bin/ dist/ third_party/credentio/lib/ docs-site/dist/ docs-site/.astro/

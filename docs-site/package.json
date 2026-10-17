@@ -11,12 +11,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.34.8",
-    "@catppuccin/starlight": "^1.1.1",
-    "astro": "^5.0.0",
-    "sharp": "^0.33.5"
+    "@astrojs/starlight": "^0.42.6",
+    "@catppuccin/starlight": "^2.1.0",
+    "astro": "^7.4.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
+  },
+  "overrides": {
+    "postcss-selector-parser": "^7.1.6"
   }
 }

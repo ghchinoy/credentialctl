@@ -1,8 +1,8 @@
 # credentialctl
 
-A command-line utility and interactive terminal interface to validate and inspect Coalition for Content Provenance and Authenticity (C2PA) Content Credentials in media files.
+A command-line utility and interactive terminal interface to validate, sign, and inspect Coalition for Content Provenance and Authenticity (C2PA) Content Credentials in media files.
 
-`credentialctl` validates manifests, digital signatures, certificate chains, and assertions in images, videos, and audio. It is powered by Google Credentio native C-ABI bindings.
+`credentialctl` validates and embeds manifests, digital signatures, certificate chains, and assertions in images, videos, audio, and documents. It is powered by Google Credentio native C-ABI bindings.
 
 ---
 
@@ -118,6 +118,30 @@ Launch the full-screen terminal interface to browse folders and inspect credenti
 
 ```bash
 credentialctl tui ./media
+```
+
+### Generate Local C2PA Test PKI (`keygen`)
+
+Generate an EC P-256 Root CA, Claim Signer key/certificate (with C2PA EKU `1.3.6.1.4.1.62558.2.1`), and RFC 3161 TSA key/certificate for local signing:
+
+```bash
+credentialctl keygen --out-dir ./test_pki
+```
+
+### Sign Media Assets In-Process (`sign`)
+
+Embed and sign a C2PA manifest into any supported media asset (and automatically verify the signed output):
+
+```bash
+# Sign with ephemeral C2PA test PKI:
+credentialctl sign photo.png -o signed.png
+
+# Sign with custom PKI, AI source type, and AI training opt-out assertion:
+credentialctl sign artwork.png -o artwork_signed.png \
+  --key ./test_pki/claim_signer_key.pem \
+  --cert ./test_pki/claim_signer_cert.pem \
+  --source-type ai \
+  --ai-opt-out
 ```
 
 ### Version and Runtime Engine Observability

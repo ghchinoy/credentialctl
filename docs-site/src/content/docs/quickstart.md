@@ -72,3 +72,15 @@ To launch the full-screen terminal interface on your current folder or a specifi
 ```
 
 Use arrow keys to navigate files, press `Enter` to drill into any asset's manifest, and press `Tab` to filter signed vs unsigned media.
+
+## Sign Your First Asset
+
+Generate a local C2PA test PKI and sign an image in-process:
+
+```bash
+./bin/credentialctl keygen --out-dir ./test_pki
+./bin/credentialctl sign input.png -o signed.png \
+  --key ./test_pki/claim_signer_key.pem \
+  --cert ./test_pki/claim_signer_cert.pem \
+  --source-type capture
+```

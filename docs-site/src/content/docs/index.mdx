@@ -1,9 +1,9 @@
 ---
 title: CredentialCTL
-description: High-performance CLI and Bubble Tea TUI for C2PA Content Credentials validation.
+description: High-performance CLI and Bubble Tea TUI for C2PA Content Credentials validation and signing.
 template: splash
 hero:
-  tagline: Validate and inspect C2PA Content Credentials in terminal. In-process, local-first, zero network overhead.
+  tagline: Validate, sign, and inspect C2PA Content Credentials in the terminal. In-process, local-first, zero network overhead.
   actions:
     - text: Quick Start
       link: /credentialctl/quickstart/
@@ -31,7 +31,7 @@ Validate manifests, digital signatures, certificate chains, and assertions in im
   <Card title="Agent-Aware CLI" icon="laptop">
     Integrate into automation pipelines using structured `--json` flags, strict exit codes (0, 1, 2), and proactive error recommendations.
   </Card>
-  <Card title="Native C-ABI Performance" icon="rocket">
-    Validate media in milliseconds via direct in-process bindings to Google Credentio native libraries.
+  <Card title="In-Process C2PA Signing" icon="rocket">
+    Generate C2PA-compliant test PKIs with `keygen` and embed signed C2PA manifests into images, video, audio, and PDFs in milliseconds with `sign`.
   </Card>
 </CardGrid>

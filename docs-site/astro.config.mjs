@@ -9,7 +9,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'CredentialCTL',
-			description: 'Agent-Aware CLI and Bubble Tea TUI for C2PA Content Credential Validation',
+			description: 'Agent-Aware CLI and Bubble Tea TUI for C2PA Content Credential Validation and Signing',
 			plugins: [
 				catppuccin({
 					dark: { flavor: 'mocha', accent: 'sky' },
@@ -41,6 +41,7 @@ export default defineConfig({
 					label: 'Command-Line Interface',
 					items: [
 						{ label: 'validate', slug: 'cli-validate' },
+						{ label: 'sign & keygen', slug: 'cli-sign' },
 						{ label: 'folder', slug: 'cli-folder' },
 						{ label: 'inspect', slug: 'cli-inspect' },
 					],
