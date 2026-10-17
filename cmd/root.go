@@ -101,6 +101,10 @@ func init() {
 		Title: "Validation Commands:",
 	})
 	rootCmd.AddGroup(&cobra.Group{
+		ID:    "signing",
+		Title: "Signing & PKI Commands:",
+	})
+	rootCmd.AddGroup(&cobra.Group{
 		ID:    "inspection",
 		Title: "Inspection Commands:",
 	})

@@ -22,7 +22,7 @@ CREDENTIO_LDFLAGS := -L$(PWD)/third_party/credentio/lib -lcredentio_c \
 endif
 
 # Version and build metadata ldflags
-VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "0.1.5-dev")
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "0.2.0")
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "dev")
 DATE    ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS := -s -w -X github.com/ghchinoy/credentialctl/cmd.version=$(VERSION) -X github.com/ghchinoy/credentialctl/cmd.commit=$(COMMIT) -X github.com/ghchinoy/credentialctl/cmd.date=$(DATE)

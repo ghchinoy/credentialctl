@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	version     = "0.1.5-dev"
+	version     = "0.2.0"
 	commit      = "dev"
 	date        = "unknown"
 	versionJSON bool

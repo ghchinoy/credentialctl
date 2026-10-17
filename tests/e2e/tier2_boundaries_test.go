@@ -65,14 +65,14 @@ func TestTier2_F1_GoModule_DirectDependencyAnnotation(t *testing.T) {
 
 	foundDirect := false
 	for _, line := range lines {
-		if strings.Contains(line, "github.com/ghchinoy/credentio-contributions/go v0.1.5") {
+		if strings.Contains(line, "github.com/ghchinoy/credentio-contributions/go v0.2.0") {
 			if !strings.Contains(line, "// indirect") {
 				foundDirect = true
 			}
 		}
 	}
 	if !foundDirect {
-		t.Errorf("credentio-contributions/go v0.1.5 must be declared as a direct dependency (not indirect)")
+		t.Errorf("credentio-contributions/go v0.2.0 must be declared as a direct dependency (not indirect)")
 	}
 }
 
@@ -90,8 +90,8 @@ func TestTier2_F1_GoModule_TransitiveIntegrity(t *testing.T) {
 	if err := json.Unmarshal([]byte(res.Stdout), &modInfo); err != nil {
 		t.Fatalf("failed to parse go list JSON: %v", err)
 	}
-	if modInfo.Version != "v0.1.5" {
-		t.Errorf("expected module version v0.1.5, got %s", modInfo.Version)
+	if modInfo.Version != "v0.2.0" {
+		t.Errorf("expected module version v0.2.0, got %s", modInfo.Version)
 	}
 }
 
