@@ -117,7 +117,7 @@ func EnsureBuiltBinary(t *testing.T) string {
 	libLinux := filepath.Join(root, "third_party", "credentio", "lib", "libcredentio_c.so")
 	if _, errD := os.Stat(libDarwin); os.IsNotExist(errD) {
 		if _, errL := os.Stat(libLinux); os.IsNotExist(errL) {
-			fetchCmd := exec.Command("./scripts/fetch-credentio-lib.sh", "0.2.0")
+			fetchCmd := exec.Command("./scripts/fetch-credentio-lib.sh", "0.2.1")
 			fetchCmd.Dir = root
 			if out, err := fetchCmd.CombinedOutput(); err != nil {
 				t.Fatalf("failed to fetch credentio native library: %v, output: %s", err, string(out))

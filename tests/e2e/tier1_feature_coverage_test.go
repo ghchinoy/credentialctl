@@ -38,7 +38,7 @@ func TestTier1_F1_UpstreamGoModule_RequirementDirective(t *testing.T) {
 	}
 	content := string(data)
 
-	expectedDep := "github.com/ghchinoy/credentio-contributions/go v0.2.0"
+	expectedDep := "github.com/ghchinoy/credentio-contributions/go v0.2.1"
 	if !strings.Contains(content, expectedDep) {
 		t.Errorf("go.mod does not contain expected requirement '%s'. Found:\n%s", expectedDep, content)
 	}
@@ -53,7 +53,7 @@ func TestTier1_F1_UpstreamGoModule_GoSumChecksums(t *testing.T) {
 	}
 	content := string(data)
 
-	expectedEntry := "github.com/ghchinoy/credentio-contributions/go v0.2.0"
+	expectedEntry := "github.com/ghchinoy/credentio-contributions/go v0.2.1"
 	if !strings.Contains(content, expectedEntry) {
 		t.Errorf("go.sum does not contain checksum entry for '%s'", expectedEntry)
 	}
@@ -66,7 +66,7 @@ func TestTier1_F1_UpstreamGoModule_GoListResolution(t *testing.T) {
 		t.Fatalf("go list failed: %v, stderr: %s", res.Err, res.Stderr)
 	}
 
-	expected := "github.com/ghchinoy/credentio-contributions/go v0.2.0"
+	expected := "github.com/ghchinoy/credentio-contributions/go v0.2.1"
 	if !strings.Contains(strings.TrimSpace(res.Stdout), expected) {
 		t.Errorf("go list output mismatch: expected %q, got %q", expected, strings.TrimSpace(res.Stdout))
 	}
@@ -122,8 +122,8 @@ func TestTier1_F2_FetchScript_DefaultVersionParameter(t *testing.T) {
 	}
 	content := string(data)
 
-	if !strings.Contains(content, `VERSION="${1:-0.2.0}"`) && !strings.Contains(content, `VERSION="${1:-v0.2.0}"`) {
-		t.Errorf("fetch script default version must be 0.2.0, found:\n%s", content)
+	if !strings.Contains(content, `VERSION="${1:-0.2.1}"`) && !strings.Contains(content, `VERSION="${1:-v0.2.1}"`) {
+		t.Errorf("fetch script default version must be 0.2.1, found:\n%s", content)
 	}
 }
 

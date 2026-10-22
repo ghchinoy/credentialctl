@@ -44,9 +44,9 @@ func TestTier3_Pairwise1_GoModule_FetchScript_VersionAlignment(t *testing.T) {
 	goModContent := string(goModData)
 	scriptContent := string(scriptData)
 
-	if strings.Contains(goModContent, "credentio-contributions/go v0.2.0") {
-		if !strings.Contains(scriptContent, "0.2.0") {
-			t.Errorf("Fetch script version is not aligned with go.mod v0.2.0 requirement")
+	if strings.Contains(goModContent, "credentio-contributions/go v0.2.1") {
+		if !strings.Contains(scriptContent, "0.2.1") {
+			t.Errorf("Fetch script version is not aligned with go.mod v0.2.1 requirement")
 		}
 	}
 }

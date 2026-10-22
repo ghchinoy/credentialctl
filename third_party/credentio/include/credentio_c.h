@@ -102,7 +102,7 @@ CR_EXPORT double cr_last_internal_seconds(cr_validator* validator);
 /// @param tsa_key_pem Optional PEM string containing the TSA's EC P-256 private key (or NULL to disable timestamping).
 /// @param tsa_cert_pem Optional PEM string containing the TSA's X.509 certificate (or NULL to disable timestamping).
 /// @param generator_name Optional claim generator name (defaults to "Credentio" if NULL/empty).
-/// @param generator_version Optional claim generator version (defaults to "0.2.0" if NULL/empty).
+/// @param generator_version Optional claim generator version (defaults to "0.2.1" if NULL/empty).
 /// @return Opaque signer pointer, or NULL if keys/certificates are invalid.
 CR_EXPORT cr_signer* cr_signer_create(
     const char* claim_signer_key_pem,
